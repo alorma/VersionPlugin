@@ -34,8 +34,8 @@ gradlePlugin {
             id = "io.github.alorma.version"
             implementationClass = "VersionPlugin"
             displayName = "Version Plugin"
-            description = "Automatically configure Android app versioning from a version.properties file"
-            tags = listOf("android", "versioning")
+            description = "Automatically configure versioning from a version.properties file — supports Android apps, Android libraries, and Kotlin Multiplatform (KMP) projects"
+            tags = listOf("android", "kotlin-multiplatform", "kmp", "versioning")
             compatibility {
                 features {
                     configurationCache = true

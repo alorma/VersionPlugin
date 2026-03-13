@@ -1,6 +1,6 @@
 # VersionPlugin
 
-A Gradle plugin that automatically configures `versionName` and `versionCode` for Android apps from a `version.properties` file.
+A Gradle plugin that automatically configures versioning from a `version.properties` file. Works with Android apps, Android libraries, and Kotlin Multiplatform (KMP) projects.
 
 ## Setup
 
@@ -15,10 +15,10 @@ versionPlugin = "1.0.0"
 versionPlugin = { id = "io.github.alorma.version", version.ref = "versionPlugin" }
 ```
 
-### 2. Apply the plugin in your app module
+### 2. Apply the plugin in your module
 
 ```kotlin
-// app/build.gradle.kts
+// app/build.gradle.kts  (Android app, Android library, or KMP module)
 plugins {
     alias(libs.plugins.versionPlugin)
 }
@@ -42,7 +42,13 @@ patch=0
 snapshot=false
 ```
 
-That's it. The plugin reads the file and automatically sets `android.defaultConfig.versionName` and `versionCode`.
+That's it. The plugin reads the file and automatically configures versioning:
+
+| Project type | What gets set |
+|---|---|
+| `com.android.application` | `android.defaultConfig.versionName` and `android.defaultConfig.versionCode` |
+| `com.android.library` | `project.version` |
+| `org.jetbrains.kotlin.multiplatform` | `project.version` |
 
 ## Version format
 
@@ -55,6 +61,26 @@ That's it. The plugin reads the file and automatically sets `android.defaultConf
 The `versionCode` is computed by zero-padding each component to 3 digits and appending `1` for release or `0` for snapshot:
 ```
 001 002 003 1  →  "0010020031".toInt()  →  10020031
+```
+
+## Kotlin Multiplatform
+
+For KMP projects, the plugin sets `project.version` which is automatically picked up by the Kotlin Multiplatform publishing plugin (`maven-publish`). This works for both KMP libraries and KMP apps.
+
+```kotlin
+// shared/build.gradle.kts
+plugins {
+    kotlin("multiplatform")
+    id("io.github.alorma.version")
+    `maven-publish`
+}
+
+kotlin {
+    androidTarget()
+    iosArm64()
+    jvm()
+}
+// project.version is automatically set to the value from version.properties
 ```
 
 ## Tasks
