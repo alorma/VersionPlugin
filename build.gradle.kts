@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "io.github.alorma"
-version = "1.0.3"
+version = "1.0.4"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
