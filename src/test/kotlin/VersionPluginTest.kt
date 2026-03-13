@@ -88,8 +88,8 @@ class VersionPluginTest {
         val result = runner("printVersionCode").build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":printVersionCode")?.outcome)
-        // 001 002 003 1 → 1002003_1
-        assertTrue(result.output.contains("100200301"), "Expected '100200301' in output:\n${result.output}")
+        // 001 002 003 1 → "0010020031".toInt() = 10020031
+        assertTrue(result.output.contains("10020031"), "Expected '10020031' in output:\n${result.output}")
     }
 
     @Test
@@ -100,8 +100,8 @@ class VersionPluginTest {
         val result = runner("printVersionCode").build()
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":printVersionCode")?.outcome)
-        // 001 002 003 0 → 1002003_0
-        assertTrue(result.output.contains("100200300"), "Expected '100200300' in output:\n${result.output}")
+        // 001 002 003 0 → "0010020030".toInt() = 10020030
+        assertTrue(result.output.contains("10020030"), "Expected '10020030' in output:\n${result.output}")
     }
 
     // --- version task ---

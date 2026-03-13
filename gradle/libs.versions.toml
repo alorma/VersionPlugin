@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.1.0"
+kotlin = "2.3.0"
 junit = "5.11.4"
 mavenPlugin = "0.30.0"
 
@@ -8,6 +8,7 @@ mavenPlugin = "0.30.0"
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit" }
+junit-launcher = { group = "org.junit.platform", name = "junit-platform-launcher", version = "1.11.4" }
 plugin-gradle-maven-publish = { group = "com.vanniktech", name = "gradle-maven-publish-plugin", version.ref = "mavenPlugin" }
 
 [plugins]

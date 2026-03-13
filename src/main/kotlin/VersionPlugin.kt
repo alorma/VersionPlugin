@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.ApplicationExtension
+import org.gradle.api.Action
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.util.Properties
@@ -7,9 +9,9 @@ class VersionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val extension = target.extensions.create("appVersion", VersionExtension::class.java, target)
 
-        target.tasks.register("version") {
-            group = "help"
-            description = "Displays the current version information"
+        target.tasks.register("version", DefaultTask::class.java, Action { task ->
+            task.group = "help"
+            task.description = "Displays the current version information"
 
             val versionName = extension.versionName
             val versionCode = extension.versionCode
@@ -18,7 +20,7 @@ class VersionPlugin : Plugin<Project> {
             val patch = extension.patch
             val snapshot = extension.snapshot
 
-            doLast {
+            task.doLast {
                 println("====================================")
                 println("  App Version Information")
                 println("====================================")
@@ -32,29 +34,29 @@ class VersionPlugin : Plugin<Project> {
                 println("  Snapshot: $snapshot")
                 println("====================================")
             }
-        }
+        })
 
-        target.tasks.register("printVersionName") {
-            group = "help"
-            description = "Prints the version name (for CI/CD)"
+        target.tasks.register("printVersionName", DefaultTask::class.java, Action { task ->
+            task.group = "help"
+            task.description = "Prints the version name (for CI/CD)"
 
             val versionName = extension.versionName
 
-            doLast {
+            task.doLast {
                 println(versionName)
             }
-        }
+        })
 
-        target.tasks.register("printVersionCode") {
-            group = "help"
-            description = "Prints the version code (for CI/CD)"
+        target.tasks.register("printVersionCode", DefaultTask::class.java, Action { task ->
+            task.group = "help"
+            task.description = "Prints the version code (for CI/CD)"
 
             val versionCode = extension.versionCode
 
-            doLast {
+            task.doLast {
                 println(versionCode)
             }
-        }
+        })
 
         target.plugins.withId("com.android.application") {
             val android = target.extensions.getByType(ApplicationExtension::class.java)
