@@ -1,3 +1,5 @@
+import org.gradle.plugin.compatibility.compatibility
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.plugin.publish)
@@ -34,6 +36,11 @@ gradlePlugin {
             displayName = "Version Plugin"
             description = "Automatically configure Android app versioning from a version.properties file"
             tags = listOf("android", "versioning")
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
     testSourceSets(sourceSets["test"])
