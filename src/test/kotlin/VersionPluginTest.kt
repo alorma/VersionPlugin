@@ -1,6 +1,7 @@
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -81,27 +82,16 @@ class VersionPluginTest {
     // --- version code ---
 
     @Test
-    fun `printVersionCode outputs correct code for release`() {
+    fun `printVersionCode is not available for non android application projects`() {
         writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
         writeBuildScript()
 
-        val result = runner("printVersionCode").build()
+        val result = runner("printVersionCode").buildAndFail()
 
-        assertEquals(TaskOutcome.SUCCESS, result.task(":printVersionCode")?.outcome)
-        // 001 002 003 1 → "0010020031".toInt() = 10020031
-        assertTrue(result.output.contains("10020031"), "Expected '10020031' in output:\n${result.output}")
-    }
-
-    @Test
-    fun `printVersionCode outputs correct code for snapshot`() {
-        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = true)
-        writeBuildScript()
-
-        val result = runner("printVersionCode").build()
-
-        assertEquals(TaskOutcome.SUCCESS, result.task(":printVersionCode")?.outcome)
-        // 001 002 003 0 → "0010020030".toInt() = 10020030
-        assertTrue(result.output.contains("10020030"), "Expected '10020030' in output:\n${result.output}")
+        assertTrue(
+            result.output.contains("printVersionCode"),
+            "Expected task-not-found error for 'printVersionCode':\n${result.output}"
+        )
     }
 
     // --- version task ---
@@ -121,6 +111,7 @@ class VersionPluginTest {
             assertTrue(contains("Minor:"))
             assertTrue(contains("Patch:"))
             assertTrue(contains("Snapshot:"))
+            assertFalse(contains("Version Code:"), "Version Code should not appear in non-Android-app projects")
         }
     }
 
@@ -178,6 +169,7 @@ class VersionPluginTest {
             assertTrue(contains("Minor:"), "Expected 'Minor:' in output:\n$this")
             assertTrue(contains("Patch:"), "Expected 'Patch:' in output:\n$this")
             assertTrue(contains("Snapshot:"), "Expected 'Snapshot:' in output:\n$this")
+            assertFalse(contains("Version Code:"), "Version Code should not appear in KMP projects")
         }
     }
 

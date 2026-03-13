@@ -25,7 +25,9 @@ class VersionPlugin : Plugin<Project> {
                 println("  Version Information")
                 println("====================================")
                 println("Version Name: $versionName")
-                println("Version Code: $versionCode")
+                if (target.plugins.hasPlugin("com.android.application")) {
+                    println("Version Code: $versionCode")
+                }
                 println()
                 println("Components:")
                 println("  Major:    $major")
@@ -47,18 +49,18 @@ class VersionPlugin : Plugin<Project> {
             }
         })
 
-        target.tasks.register("printVersionCode", DefaultTask::class.java, Action { task ->
-            task.group = "help"
-            task.description = "Prints the version code (for CI/CD)"
-
-            val versionCode = extension.versionCode
-
-            task.doLast {
-                println(versionCode)
-            }
-        })
-
         target.plugins.withId("com.android.application") {
+            target.tasks.register("printVersionCode", DefaultTask::class.java, Action { task ->
+                task.group = "help"
+                task.description = "Prints the version code (for CI/CD)"
+
+                val versionCode = extension.versionCode
+
+                task.doLast {
+                    println(versionCode)
+                }
+            })
+
             val android = target.extensions.getByType(ApplicationExtension::class.java)
             android.defaultConfig {
                 versionCode = extension.versionCode
