@@ -22,7 +22,7 @@ class VersionPlugin : Plugin<Project> {
 
             task.doLast {
                 println("====================================")
-                println("  App Version Information")
+                println("  Version Information")
                 println("====================================")
                 println("Version Name: $versionName")
                 println("Version Code: $versionCode")

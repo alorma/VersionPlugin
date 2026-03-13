@@ -115,6 +115,7 @@ class VersionPluginTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":version")?.outcome)
         with(result.output) {
+            assertTrue(contains("Version Information"))
             assertTrue(contains("2.0.5"))
             assertTrue(contains("Major:"))
             assertTrue(contains("Minor:"))
@@ -160,6 +161,24 @@ class VersionPluginTest {
             }
             """.trimIndent()
         )
+    }
+
+    @Test
+    fun `version task prints all components for kotlin multiplatform project`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeKmpBuildScript()
+
+        val result = runner("version").build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":version")?.outcome)
+        with(result.output) {
+            assertTrue(contains("Version Information"), "Expected 'Version Information' in output:\n$this")
+            assertTrue(contains("1.2.3"), "Expected '1.2.3' in output:\n$this")
+            assertTrue(contains("Major:"), "Expected 'Major:' in output:\n$this")
+            assertTrue(contains("Minor:"), "Expected 'Minor:' in output:\n$this")
+            assertTrue(contains("Patch:"), "Expected 'Patch:' in output:\n$this")
+            assertTrue(contains("Snapshot:"), "Expected 'Snapshot:' in output:\n$this")
+        }
     }
 
     @Test
