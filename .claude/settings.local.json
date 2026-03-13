@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:github.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(gradle wrapper:*)"
+      "Bash(gradle wrapper:*)",
+      "Bash(git fetch:*)"
     ]
   }
 }
