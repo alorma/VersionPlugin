@@ -69,6 +69,10 @@ class VersionPlugin : Plugin<Project> {
         target.plugins.withId("com.android.library") {
             target.version = extension.versionName
         }
+
+        target.plugins.withId("org.jetbrains.kotlin.multiplatform") {
+            target.version = extension.versionName
+        }
     }
 }
 

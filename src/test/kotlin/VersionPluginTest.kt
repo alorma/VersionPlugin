@@ -123,6 +123,73 @@ class VersionPluginTest {
         }
     }
 
+    // --- kotlin multiplatform ---
+
+    private fun writeKmpBuildScript() {
+        projectDir.resolve("settings.gradle.kts").writeText(
+            """
+            pluginManagement {
+                repositories {
+                    mavenLocal()
+                    gradlePluginPortal()
+                    mavenCentral()
+                }
+            }
+            dependencyResolutionManagement {
+                repositories {
+                    mavenCentral()
+                    gradlePluginPortal()
+                }
+            }
+            rootProject.name = "test-kmp-project"
+            """.trimIndent()
+        )
+        projectDir.resolve("build.gradle.kts").writeText(
+            """
+            plugins {
+                id("org.jetbrains.kotlin.multiplatform") version "2.3.0"
+                id("io.github.alorma.version")
+            }
+            kotlin {
+                jvm()
+            }
+            tasks.register("printProjectVersion") {
+                doLast {
+                    println("projectVersion=${'$'}{project.version}")
+                }
+            }
+            """.trimIndent()
+        )
+    }
+
+    @Test
+    fun `plugin sets project version for kotlin multiplatform project`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeKmpBuildScript()
+
+        val result = runner("printProjectVersion").build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":printProjectVersion")?.outcome)
+        assertTrue(
+            result.output.contains("projectVersion=1.2.3"),
+            "Expected 'projectVersion=1.2.3' in output:\n${result.output}"
+        )
+    }
+
+    @Test
+    fun `plugin sets snapshot project version for kotlin multiplatform project`() {
+        writeVersionProperties(major = 0, minor = 3, patch = 1, snapshot = true)
+        writeKmpBuildScript()
+
+        val result = runner("printProjectVersion").build()
+
+        assertEquals(TaskOutcome.SUCCESS, result.task(":printProjectVersion")?.outcome)
+        assertTrue(
+            result.output.contains("projectVersion=0.3.1-SNAPSHOT"),
+            "Expected 'projectVersion=0.3.1-SNAPSHOT' in output:\n${result.output}"
+        )
+    }
+
     // --- missing version.properties ---
 
     @Test
