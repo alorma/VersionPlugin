@@ -1,12 +1,12 @@
 name: Publish and Release
 
-# This workflow publishes the plugin to Maven Central and creates a GitHub release.
+# This workflow publishes the plugin to the Gradle Plugin Portal and creates a GitHub release.
 # It can be triggered manually from the GitHub Actions UI.
 #
 # The workflow performs the following steps:
 # 1. Reads the current version from build.gradle.kts
 # 2. Runs tests
-# 3. Publishes to Maven Central
+# 3. Publishes to Gradle Plugin Portal
 # 4. After publish succeeds:
 #    Creates a git tag and GitHub release with auto-generated release notes
 #    Calculates the next version (increments patch)
@@ -71,7 +71,7 @@ jobs:
           path: build/reports/tests/
 
   publish:
-    name: Publish to Maven Central
+    name: Publish to Gradle Plugin Portal
     needs: [ test, get-version ]
     runs-on: ubuntu-latest
     steps:
@@ -87,13 +87,11 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
 
-      - name: Publish to Maven Central
-        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+      - name: Publish to Gradle Plugin Portal
+        run: ./gradlew publishPlugins --no-configuration-cache
         env:
-          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
-          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
-          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
 
   create-release-and-update-version:
     name: Create Release and Update Version
