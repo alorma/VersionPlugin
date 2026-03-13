@@ -1,5 +1,4 @@
 import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -68,10 +67,7 @@ class VersionPlugin : Plugin<Project> {
         }
 
         target.plugins.withId("com.android.library") {
-            val android = target.extensions.getByType(LibraryExtension::class.java)
-            android.defaultConfig {
-                versionName = extension.versionName
-            }
+            target.version = extension.versionName
         }
     }
 }
