@@ -6,12 +6,12 @@ name: Publish and Release
 # The workflow performs the following steps:
 # 1. Reads the current version from build.gradle.kts
 # 2. Runs tests
-# 3. In parallel:
-#    a. Publishes to Maven Central
-#    b. Creates a git tag and GitHub release with auto-generated release notes
-#       Calculates the next version (increments patch)
-#       Updates build.gradle.kts with the new version
-#       Commits and pushes the version update back to main
+# 3. Publishes to Maven Central
+# 4. After publish succeeds:
+#    Creates a git tag and GitHub release with auto-generated release notes
+#    Calculates the next version (increments patch)
+#    Updates build.gradle.kts with the new version
+#    Commits and pushes the version update back to main
 
 on:
   workflow_dispatch:
@@ -97,7 +97,7 @@ jobs:
 
   create-release-and-update-version:
     name: Create Release and Update Version
-    needs: [ test, get-version ]
+    needs: [ publish, get-version ]
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
