@@ -4,7 +4,7 @@ plugins {
     `java-gradle-plugin`
 }
 
-group = "io.github.alorma"
+group = "com.github.alorma"
 version = "1.0.0"
 
 java {
@@ -27,7 +27,7 @@ tasks.test {
 gradlePlugin {
     plugins {
         create("versionPlugin") {
-            id = "io.github.alorma.version"
+            id = "com.github.alorma.version"
             implementationClass = "VersionPlugin"
             displayName = "Version Plugin"
             description = "Automatically configure Android app versioning from a version.properties file"
@@ -40,7 +40,7 @@ mavenPublishing {
     publishToMavenCentral()
     signAllPublications()
 
-    coordinates("io.github.alorma", "version-plugin", "1.0.0")
+    coordinates("com.github.alorma", "version-plugin", "1.0.0")
 
     pom {
         name.set("Version Plugin")
