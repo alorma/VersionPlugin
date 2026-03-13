@@ -24,7 +24,16 @@ plugins {
 }
 ```
 
-### 2. Create `version.properties` in your project root
+Alternatively, without a version catalog:
+
+```kotlin
+// app/build.gradle.kts
+plugins {
+    id("com.github.alorma.version") version "1.0.0"
+}
+```
+
+### 3. Create `version.properties` in your project root
 
 ```properties
 major=1
