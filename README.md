@@ -96,7 +96,7 @@ The plugin registers three tasks in the `help` group:
 ## License
 
 ```
-Copyright 2024 Bernat Borrás
+Copyright 2026 Bernat Borrás
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
