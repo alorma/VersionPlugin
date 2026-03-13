@@ -42,7 +42,7 @@ class VersionPluginTest {
         projectDir.resolve("build.gradle.kts").writeText(
             """
             plugins {
-                id("com.github.alorma.version")
+                id("io.github.alorma.version")
             }
             """.trimIndent()
         )

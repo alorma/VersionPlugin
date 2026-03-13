@@ -27,7 +27,7 @@ This is a single-module Gradle plugin project. All logic lives in two files:
 
 ## Key conventions
 
-- **Group / plugin ID**: `com.github.alorma` / `com.github.alorma.version`
-- **Publishing**: uses `com.vanniktech.maven.publish` — configured via `mavenPublishing {}` in `build.gradle.kts`. Signing and Sonatype credentials are passed as `ORG_GRADLE_PROJECT_*` env vars in CI (see `.github/workflows/publish.yml`).
+- **Group / plugin ID**: `io.github.alorma` / `io.github.alorma.version`
+- **Publishing**: uses `com.gradle.plugin-publish` — publishes to the Gradle Plugin Portal via `./gradlew publishPlugins`. Credentials `GRADLE_PUBLISH_KEY` / `GRADLE_PUBLISH_SECRET` are passed as env vars in CI (see `.github/workflows/publish.yml`).
 - **Kotlin version** must match Gradle's embedded Kotlin (currently `2.3.0` for Gradle 9.4). Changing the Gradle wrapper version requires updating `kotlin` in `gradle/libs.versions.toml` to match.
 - **`versionCode` formula**: each of `major`, `minor`, `patch` is zero-padded to 3 digits, then `1` (release) or `0` (snapshot) is appended, and the result is parsed as `Int`. Leading zeroes are dropped by `toInt()`, so `1.2.3` → `10020031`.

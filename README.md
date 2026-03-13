@@ -12,7 +12,7 @@ A Gradle plugin that automatically configures `versionName` and `versionCode` fo
 versionPlugin = "1.0.0"
 
 [plugins]
-versionPlugin = { id = "com.github.alorma.version", version.ref = "versionPlugin" }
+versionPlugin = { id = "io.github.alorma.version", version.ref = "versionPlugin" }
 ```
 
 ### 2. Apply the plugin in your app module
@@ -29,7 +29,7 @@ Alternatively, without a version catalog:
 ```kotlin
 // app/build.gradle.kts
 plugins {
-    id("com.github.alorma.version") version "1.0.0"
+    id("io.github.alorma.version") version "1.0.0"
 }
 ```
 

@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.plugin.publish)
 }
 
-group = "com.github.alorma"
+group = "io.github.alorma"
 version = "1.0.0"
 
 java {
@@ -29,7 +29,7 @@ gradlePlugin {
 
     plugins {
         create("versionPlugin") {
-            id = "com.github.alorma.version"
+            id = "io.github.alorma.version"
             implementationClass = "VersionPlugin"
             displayName = "Version Plugin"
             description = "Automatically configure Android app versioning from a version.properties file"
