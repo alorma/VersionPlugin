@@ -65,6 +65,10 @@ class VersionPlugin : Plugin<Project> {
                 versionName = extension.versionName
             }
         }
+
+        target.plugins.withId("com.android.library") {
+            target.version = extension.versionName
+        }
     }
 }
 
