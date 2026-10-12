@@ -63,6 +63,41 @@ The `versionCode` is computed by zero-padding each component to 3 digits and app
 001 002 003 1  →  "0010020031".toInt()  →  10020031
 ```
 
+## Multiple form factors (phone, Wear OS, TV, ...)
+
+Google Play requires a **unique `versionCode` per form factor** within the same listing. If several `com.android.application` modules share the same package name and `version.properties`, set a `formFactor` in each one:
+
+```kotlin
+// wear/build.gradle.kts
+plugins {
+    alias(libs.plugins.versionPlugin)
+}
+
+appVersion {
+    formFactor = FormFactor.WEAR
+}
+```
+
+The form factor's offset is added to the computed `versionCode`:
+
+| `FormFactor` | Offset |
+|---|---|
+| `PHONE` (default) | `0` |
+| `WEAR` | `2` |
+| `TV` | `4` |
+| `AUTOMOTIVE` | `6` |
+
+Offsets are multiples of 2, so release (`+1`) and snapshot (`+0`) codes of different form factors never collide, and they never reach the next patch. Modules without `formFactor` keep exactly the same codes as before.
+
+Example for version `1.6.1`:
+
+| Module | Release | Snapshot |
+|---|---|---|
+| Phone | `10060011` | `10060010` |
+| Wear | `10060013` | `10060012` |
+
+`formFactor` only affects `com.android.application` modules; it is ignored for libraries and KMP.
+
 ## Kotlin Multiplatform
 
 For KMP projects, the plugin sets `project.version` which is automatically picked up by the Kotlin Multiplatform publishing plugin (`maven-publish`). This works for both KMP libraries and KMP apps.

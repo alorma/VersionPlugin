@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
@@ -14,7 +15,7 @@ class VersionPlugin : Plugin<Project> {
             task.description = "Displays the current version information"
 
             val versionName = extension.versionName
-            val versionCode = extension.versionCode
+            val versionCode = target.provider { extension.versionCode }
             val major = extension.major
             val minor = extension.minor
             val patch = extension.patch
@@ -26,7 +27,7 @@ class VersionPlugin : Plugin<Project> {
                 println("====================================")
                 println("Version Name: $versionName")
                 if (target.plugins.hasPlugin("com.android.application")) {
-                    println("Version Code: $versionCode")
+                    println("Version Code: ${versionCode.get()}")
                 }
                 println()
                 println("Components:")
@@ -54,17 +55,22 @@ class VersionPlugin : Plugin<Project> {
                 task.group = "help"
                 task.description = "Prints the version code (for CI/CD)"
 
-                val versionCode = extension.versionCode
+                val versionCode = target.provider { extension.versionCode }
 
                 task.doLast {
-                    println(versionCode)
+                    println(versionCode.get())
                 }
             })
 
             val android = target.extensions.getByType(ApplicationExtension::class.java)
             android.defaultConfig {
-                versionCode = extension.versionCode
                 versionName = extension.versionName
+            }
+            // formFactor is set in the user's appVersion { } block, which runs after this plugin is applied,
+            // so the code is wired lazily through the variant API
+            val versionCode = target.provider { extension.versionCode }
+            target.extensions.getByType(ApplicationAndroidComponentsExtension::class.java).onVariants { variant ->
+                variant.outputs.forEach { output -> output.versionCode.set(versionCode) }
             }
         }
 
@@ -98,11 +104,31 @@ open class VersionExtension(private val project: Project) {
         if (snapshot) append("-SNAPSHOT")
     }
 
-    val versionCode: Int = run {
+    /**
+     * Form factor of this module. Added to the `versionCode` so that modules sharing one Google Play
+     * listing (phone, watch, ...) get distinct codes. Only applies to Android application modules.
+     */
+    var formFactor: FormFactor = FormFactor.PHONE
+
+    val versionCode: Int
+        get() = baseVersionCode + formFactor.offset
+
+    private val baseVersionCode: Int = run {
         val majorPart = major.toString().padStart(3, '0')
         val minorPart = minor.toString().padStart(3, '0')
         val patchPart = patch.toString().padStart(3, '0')
         val snapshotPart = if (snapshot) "0" else "1"
         "$majorPart$minorPart$patchPart$snapshotPart".toInt()
     }
+}
+
+/**
+ * Offsets are multiples of 2 so that release (`+1`) and snapshot (`+0`) codes of different form
+ * factors never collide, and the maximum (8 + 1) stays within the patch's last digit.
+ */
+enum class FormFactor(val offset: Int) {
+    PHONE(0),
+    WEAR(2),
+    TV(4),
+    AUTOMOTIVE(6),
 }

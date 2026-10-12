@@ -6,19 +6,27 @@ plugins {
 }
 
 group = "io.github.alorma"
-version = "1.0.4"
+version = "1.1.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
 
+// AGP must share a classloader with the plugin under test (TestKit), without leaking into its published dependencies
+val testPluginClasspath = configurations.create("testPluginClasspath")
+
 dependencies {
+    testPluginClasspath(libs.android.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
 
     testImplementation(libs.junit.jupiter)
     testRuntimeOnly(libs.junit.launcher)
+}
+
+tasks.pluginUnderTestMetadata {
+    pluginClasspath.from(testPluginClasspath)
 }
 
 tasks.test {

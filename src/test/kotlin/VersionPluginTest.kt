@@ -115,6 +115,103 @@ class VersionPluginTest {
         }
     }
 
+    // --- form factor (android application) ---
+
+    private fun writeAndroidAppBuildScript(formFactor: String? = null) {
+        projectDir.resolve("settings.gradle.kts").writeText(
+            """
+            pluginManagement {
+                repositories {
+                    mavenLocal()
+                    google()
+                    gradlePluginPortal()
+                    mavenCentral()
+                }
+            }
+            rootProject.name = "test-android-project"
+            """.trimIndent()
+        )
+        val formFactorBlock = formFactor?.let { "appVersion { formFactor = FormFactor.$it }" } ?: ""
+        projectDir.resolve("build.gradle.kts").writeText(
+            """
+            plugins {
+                id("com.android.application")
+                id("io.github.alorma.version")
+            }
+            android {
+                namespace = "com.example.test"
+                compileSdk = 34
+            }
+            $formFactorBlock
+            val agpCode = objects.property(Int::class.java)
+            androidComponents.onVariants { variant -> agpCode.set(variant.outputs.single().versionCode) }
+            tasks.register("printDefaultConfigVersionCode") {
+                doLast { println("agpVersionCode=${'$'}{agpCode.get()}") }
+            }
+            """.trimIndent()
+        )
+    }
+
+    private fun printedVersionCode(): String =
+        runner("printVersionCode", "-q").build().output.trim()
+
+    @Test
+    fun `versionCode is unchanged when no form factor is configured`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeAndroidAppBuildScript()
+
+        assertEquals("10020031", printedVersionCode())
+    }
+
+    @Test
+    fun `wear form factor adds offset to release and snapshot version codes`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeAndroidAppBuildScript(formFactor = "WEAR")
+        assertEquals("10020033", printedVersionCode())
+
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = true)
+        assertEquals("10020032", printedVersionCode())
+    }
+
+    @Test
+    fun `android defaultConfig uses the version code with form factor offset`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeAndroidAppBuildScript(formFactor = "WEAR")
+
+        val result = runner("printDefaultConfigVersionCode").build()
+
+        assertTrue(result.output.contains("agpVersionCode=10020033"), result.output)
+    }
+
+    @Test
+    fun `version task includes form factor offset in version code`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeAndroidAppBuildScript(formFactor = "TV")
+
+        val result = runner("version").build()
+
+        assertTrue(result.output.contains("Version Code: 10020035"), result.output)
+    }
+
+    @Test
+    fun `printVersionCode reuses configuration cache`() {
+        writeVersionProperties(major = 1, minor = 2, patch = 3, snapshot = false)
+        writeAndroidAppBuildScript(formFactor = "WEAR")
+
+        runner("printVersionCode", "--configuration-cache").build()
+        val second = runner("printVersionCode", "--configuration-cache").build()
+
+        assertTrue(second.output.contains("Reusing configuration cache"), second.output)
+        assertTrue(second.output.contains("10020033"), second.output)
+    }
+
+    @Test
+    fun `form factor offsets are even and fit in the last digit`() {
+        assertEquals(0, FormFactor.PHONE.offset)
+        assertTrue(FormFactor.entries.all { it.offset in 0..8 && it.offset % 2 == 0 })
+        assertEquals(FormFactor.entries.size, FormFactor.entries.map { it.offset }.distinct().size)
+    }
+
     // --- kotlin multiplatform ---
 
     private fun writeKmpBuildScript() {
@@ -139,7 +236,7 @@ class VersionPluginTest {
         projectDir.resolve("build.gradle.kts").writeText(
             """
             plugins {
-                id("org.jetbrains.kotlin.multiplatform") version "2.3.0"
+                id("org.jetbrains.kotlin.multiplatform") version "2.4.10"
                 id("io.github.alorma.version")
             }
             kotlin {
