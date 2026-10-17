@@ -60,7 +60,8 @@ Do **not** also set `versionName` / `versionCode` by hand in `defaultConfig`; th
 - `versionName`: `major.minor.patch`, plus `-SNAPSHOT` when `snapshot=true`.
 - `versionCode` (apps only): each of major/minor/patch zero-padded to 3 digits, then `1` (release) or
   `0` (snapshot), parsed as Int. `1.2.3` release → `10020031`, snapshot → `10020030`.
-  Limits: each component must stay below 1000 and the code must fit in an Int (major ≤ 2 in practice).
+  Limits: each component must stay below 1000 (3 digits) and the resulting 10-digit number must fit in
+  an Int (max 2147483647), so `major` can be at most 213 or so.
 
 To release: edit `version.properties` (bump numbers, set `snapshot=false`). Do not edit Gradle files.
 
