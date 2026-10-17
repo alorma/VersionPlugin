@@ -2,6 +2,12 @@
 
 A Gradle plugin that automatically configures versioning from a `version.properties` file. Works with Android apps, Android libraries, and Kotlin Multiplatform (KMP) projects.
 
+## For AI agents
+
+Using an AI coding agent (Claude, Codex, Copilot, ...) to set up this plugin? Point it to
+[docs/AGENT_INSTRUCTIONS.md](docs/AGENT_INSTRUCTIONS.md) (also indexed in [llms.txt](llms.txt)).
+Contributors' agents should read [AGENTS.md](AGENTS.md).
+
 ## Setup
 
 ### 1. Add the plugin to your version catalog

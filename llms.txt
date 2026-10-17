@@ -1,0 +1,16 @@
+# VersionPlugin
+
+> Gradle plugin (`io.github.alorma.version`) that sets versionName / versionCode (Android apps) or project.version (Android libraries, Kotlin Multiplatform) from a `version.properties` file. Published on the Gradle Plugin Portal.
+
+## Using the plugin
+
+- [Agent instructions](https://raw.githubusercontent.com/alorma/VersionPlugin/main/docs/AGENT_INSTRUCTIONS.md): setup, version format, form factors, tasks, common mistakes. Start here.
+- [README](https://raw.githubusercontent.com/alorma/VersionPlugin/main/README.md)
+
+## Working on the plugin itself
+
+- [AGENTS.md](https://raw.githubusercontent.com/alorma/VersionPlugin/main/AGENTS.md): architecture, build and test commands, conventions.
+
+## Optional
+
+- [formFactor design notes](https://raw.githubusercontent.com/alorma/VersionPlugin/main/docs/version-code-offset.md)
